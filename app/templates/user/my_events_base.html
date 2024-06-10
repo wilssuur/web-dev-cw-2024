@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link {% if request.endpoint == 'events.created' %} active {% endif %}" aria-current="page" href="{{ url_for('events.created') }}">Созданные события</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if request.endpoint == 'records.records' %} active {% endif %}" href="{{ url_for('records.records') }}">Запланированные</a>
+    </li>
+
+  </ul>
+
+{% block tab_content %}
+{% endblock %}
+{% endblock %}

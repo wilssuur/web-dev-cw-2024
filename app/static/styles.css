@@ -1,0 +1,5 @@
+
+.background-preview {
+    border: 3px dashed grey;
+    flex-grow: 1;
+}

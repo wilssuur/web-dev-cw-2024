@@ -1,0 +1,24 @@
+{% macro render_pagination(page_number, total_pages, start_page, end_page, url) %}
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        <li class="page-item {% if page_number <= 1 %}disabled{% endif %}">
+            <a class="page-link" href="{% if page_number > 1 %}{{ url_for(url, page_number=page_number-1) }}{% else %}#{% endif %}">
+                Предыдущая
+            </a>
+        </li>
+
+        {% for page in range(start_page, end_page + 1) %}
+        <li class="page-item {% if page == page_number %}active{% endif %}">
+            <a class="page-link" href="{{ url_for(url, page_number=page) }}">{{ page }}</a>
+        </li>
+        {% endfor %}
+
+        <li class="page-item {% if page_number >= total_pages %}disabled{% endif %}">
+            <a class="page-link" href="{% if page_number < total_pages %}{{ url_for(url, page_number=page_number+1) }}{% else %}#{% endif %}">
+                Следующая
+            </a>
+        </li>
+    </ul>
+</nav>
+
+{% endmacro %}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link {% if request.endpoint == 'admin.awaiting' %} active {% endif %}" aria-current="page" href="{{ url_for('admin.awaiting') }}">Ожидают оценки</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if request.endpoint == 'admin.ready' %} active {% endif %}" href="{{ url_for('admin.ready') }}">Обработаны</a>
+    </li>
+
+  </ul>
+
+{% block tab_content %}
+{% endblock %}
+{% endblock %}

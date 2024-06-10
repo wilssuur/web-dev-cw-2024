@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+
+{% from 'user/event_macros.html' import event_form %}
+
+{% block content %}
+    <h2>Новое мероприятие</h2>
+    {{ event_form(topics, 'show', event) }}
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'admin/admin_event_base.html' %}
+{% from 'pagination.html' import render_pagination %}
+
+{% block tab_content %}
+    <table class="table mt-3">
+
+        <tbody>
+            {% for event in events %}
+            <tr>
+                <td>
+                    <h4>{{ event.name }}</h4>
+                    <p style="color: gray;"> {{ event.date_start }} {{ event.time_start }}, {{ event.last_name }} {{ event.first_name }}</p>
+                </td>
+                {% if datetime.combine(event.date_start, datetime.min.time()) < current_time %}
+                <td style="vertical-align: middle; text-align: center;">
+                    <p style="color: red;">Уже прошло</p>
+                </td>
+                {% else %}
+                <td style="vertical-align: middle; text-align: center;">
+                    <form action="{{ url_for('admin.accept_event', event_id=event.id) }}" method="post" style="display: inline;">
+                        <button class="btn btn-outline-success px-3 py-2 me-2" type="submit">Принять</button>
+                    </form>
+                    <form action="{{ url_for('admin.reject_event', event_id=event.id) }}" method="post" style="display: inline;">
+                        <button class="btn btn-outline-danger px-3 py-2" type="submit">Отклонить</button>
+                    </form>
+                    <td style="vertical-align: middle;">
+                        <a class="btn btn-outline-dark" href="{{ url_for('events.show', event_id=event.id) }}">Подробнее</a>
+                    </td>
+                </td>
+                {% endif %}
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if total_pages > 1 %}
+        {{ render_pagination(page_number, total_pages, start_page, end_page, 'admin.awaiting') }}
+    {% endif %}
+    
+{% endblock %}

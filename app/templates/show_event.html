@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+        <div class="mt-3 mb-4">
+            <h3>{{ event.name }}</h3>
+            <p> {{ event.date_start }} {{ event.time_start }}, Иван Петрович</p>
+            <p>Продолжительность: {{ event.duration }} час(а)</p>
+            <img src="{{ url_for('static', filename='/images/' ~ event.image_filename) }}" alt="{{ event.name }}" style="width: 500px;">
+
+            <div class="mt-3 mb-5">
+                <p> {% if event.full_desc %}
+                    {{ event.full_desc }} 
+                    {% else %}
+                    {{ event.short_desc }}
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+{% endblock %}

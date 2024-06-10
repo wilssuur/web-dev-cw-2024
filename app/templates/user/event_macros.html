@@ -1,0 +1,85 @@
+{% macro event_form(topics, action, event=None) %}
+        <form method='post' enctype = "multipart/form-data">
+            <div class="mb-3 row">
+                <div class="col-md-6 d-flex flex-column">
+                    <div class="mb-3">
+                        <label for="name">Название <span style="color: red;">*</span></label>
+                        {% if event.name %}
+                        <input class="form-control" type="text" name="name" id="name" value="{{ event.name }}" required>
+                        {% else %}
+                        <input class="form-control" type="text" name="name" id="name" value="" required>
+                        {% endif %}
+                    </div>                    
+                    <div class="mb-3">
+                        <label for="topic">Тема мероприятия <span style="color: red;">*</span></label>
+                        <select class="form-select" name="topic" id="topic">
+                            {% for topic in topics %}
+                                {% if event.topic_id == topic.id %}
+                                <option value="{{ topic.id }}" selected>{{ topic.name }}</option>
+                                {% else %}
+                                <option value="{{ topic.id }}">{{ topic.name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="start_date">Дата начала мероприятия <span style="color: red;">*</span></label>
+                        {% if event.date_start %}
+                        <input class="form-control" value="{{ event.date_start }}" type="date" name="start_date" id="start_date" min="{{ today }}" required>
+                        {% else %}
+                        <input class="form-control" type="date" name="start_date" id="start_date" min="{{ today }}" required>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="start_time">Время начала мероприятия <span style="color: red;">*</span></label>
+                        {% if event.time_start %}
+                        <input class="form-control" value="{{ event.time_start }}" type="time" name="start_time" id="start_time" required step="1800">
+                        {% else %}
+                        <input class="form-control" type="time" name="start_time" id="start_time" required step="1800">
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="duration">Продолжительность мероприятия (в часах) <span style="color: red;">*</span></label>
+                        {% if event.duration %}
+                        <input class="form-control" type="number" name="duration" id="duration" min="1" value="{{ event.duration }}" required>
+                        {% else %}
+                        <input class="form-control" type="number" name="duration" id="duration" min="1" required>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3 d-flex flex-column flex-grow-1">
+                        <label for="short_desc">Краткое описание <span style="color: red;">*</span></label>
+                        {% if event.short_desc %}
+                        <textarea class="form-control flex-grow-1" name="short_desc" id="short_desc" cols="30" rows="5">{{ event.short_desc }}</textarea>
+                        {% else %}
+                        <textarea class="form-control flex-grow-1" name="short_desc" id="short_desc" cols="30" rows="5"></textarea>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6 d-flex flex-column">
+                    <div class="mb-3">
+                        <label for="file">Фоновое изображение <span style="color: red;">*</span></label>
+                        <input class="form-control" type="file" name="file" id="file">
+                    </div>
+                    <div class="mb-3 background-preview p-3 rounded d-flex align-items-center justify-content-center">
+                        <img src="#" class="img-fluid d-none" alt="">
+                        <label for="file" class="btn btn-dark">Выбрать изображение</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="full_desc">Полное описание</label>
+                {% if event.full_desc %}
+                <textarea class="form-control" name="full_desc" id="full_desc" cols="30" rows="10">{{ event.full_desc }}</textarea>
+                {% else %}
+                <textarea class="form-control" name="full_desc" id="full_desc" cols="30" rows="10"></textarea>
+                {% endif %}
+            </div>
+
+            <div class="mb-3 text-center">
+                <button class="btn btn-dark">Сохранить</button>
+            </div>
+        </form>
+    </div>
+
+{% endmacro %}

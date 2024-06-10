@@ -1,0 +1,62 @@
+{% extends 'user/my_events_base.html' %}
+{% from 'pagination.html' import render_pagination %}
+{% block tab_content %}
+    <table class="table mt-4">
+        <tbody>
+            {% for event in events %}
+            <tr>
+                <td>
+                    <h4>{{ event.name }}</h4>
+                    <p style="color: gray;">Дата мероприятия: {{ event.date_start }} {{ event.time_start }}</p>
+                </td>
+                <td style="vertical-align: middle;">
+                    <h6 {% if event.status == 'Одобрено' %} style="color: green;" 
+                    {% elif event.status == 'Отклонено' %} style="color: red;" 
+                    {% endif %}> {{ event.status }} </h6>
+                </td>
+                {% if datetime.combine(event.date_start, datetime.min.time()) < current_time %}
+                <td style="vertical-align: middle; text-align: center;">
+                    <p style="color: grey;">Мероприятие уже прошло</p>
+                </td>
+                {% else %}
+                <td style="vertical-align: middle; text-align: center;">
+                    <a class="btn btn-outline-dark" href="{{ url_for('events.show', event_id=event.id) }}">Просмотр</a>
+                    <a class="btn btn-outline-dark" href="{{ url_for('events.edit', event_id=event.id) }}" 
+                    {% if event.status != 'На рассмотрении' %}style="pointer-events: none;color: grey; border-color: grey;"{% endif %}>
+                        Редактировать
+                    </a>                    
+                    <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#delete-modal" data-delete-url="{{ url_for('events.delete', event_id=event.id) }}" href="{{ url_for('events.created', event_id=event.id) }}" 
+                        {% if event.status != 'На рассмотрении' %}style="pointer-events: none;color: grey; border-color: grey;"{% endif %}>
+                        Удалить
+                    </button>
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="modal" id="delete-modal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Удаление пользователя</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>Вы уверены, что хотите удалить пользователя?</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
+              <form action="" method="post">
+                <button type="submit" class="btn btn-danger">Да</button>
+              </form>
+            </div>
+          </div>
+        </div>
+    </div>
+    {% if total_pages > 1 %}
+    {{ render_pagination(page_number, total_pages, start_page, end_page, 'events.created') }}
+    {% endif %}
+
+{% endblock %}

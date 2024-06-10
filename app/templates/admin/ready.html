@@ -1,0 +1,35 @@
+{% extends 'admin/admin_event_base.html' %}
+{% from 'pagination.html' import render_pagination %}
+
+{% block tab_content %}
+    <table class="table mt-3">
+
+        <tbody>
+            {% for event in events %}
+            <tr>
+                <td>
+                    <h4>{{ event.name }}</h4>
+                    <p style="color: gray;"> {{ event.date_start }} {{ event.time_start }}, {{ event.last_name }} {{ event.first_name }}</p>
+                </td>
+                <td style="vertical-align: middle;">
+                    <h6 {% if event.status == 'Одобрено' %} style="color: green;" 
+                    {% elif event.status == 'Отклонено' %} style="color: red;" 
+                    {% endif %}> {{ event.status }} </h6>
+                </td>
+                {% if datetime.combine(event.date_start, datetime.min.time()) < current_time %}
+                <td style="vertical-align: middle;">
+                    <p style="color: grey;">Уже прошло</p>
+                </td>
+                {% else %}
+                <td style="vertical-align: middle;">
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if total_pages > 1 %}
+        {{ render_pagination(page_number, total_pages, start_page, end_page, 'admin.ready') }}
+    {% endif %}
+    
+{% endblock %}

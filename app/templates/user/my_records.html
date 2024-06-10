@@ -1,0 +1,28 @@
+{% extends 'user/my_events_base.html' %}
+{% block tab_content %}
+    <table class="table mt-3">
+        <tbody>
+            {% for record in records %}
+                <tr>
+                    <td>
+                        <h4>{{ record.name }}</h4>
+                        <p style="color: gray;">Дата мероприятия: {{ record.date_start }} {{ record.time_start }}</p>
+                    </td>
+                    {% if datetime.combine(record.date_start, datetime.min.time()) < current_time %}
+                    <td style="vertical-align: middle;">
+                        <p style="color: grey;">Уже прошло</p>
+                    </td>
+                    {% else %}
+                    <td style="vertical-align: middle;">
+                        <a class="btn btn-outline-dark" href="{{ url_for('events.show', event_id=record.event_id) }}">Подробнее</a>
+                    </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if total_pages > 1 %}
+    {{ render_pagination(page_number, total_pages, start_page, end_page, 'events.records') }}
+    {% endif %}
+
+{% endblock %}
