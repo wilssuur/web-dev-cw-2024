@@ -4,11 +4,7 @@
                 <div class="col-md-6 d-flex flex-column">
                     <div class="mb-3">
                         <label for="name">Название <span style="color: red;">*</span></label>
-                        {% if event.name %}
-                        <input class="form-control" type="text" name="name" id="name" value="{{ event.name }}" required>
-                        {% else %}
-                        <input class="form-control" type="text" name="name" id="name" value="" required>
-                        {% endif %}
+                        <input class="form-control" type="text" name="name" id="name" value="{{ event.name or '' }}" required>
                     </div>                    
                     <div class="mb-3">
                         <label for="topic">Тема мероприятия <span style="color: red;">*</span></label>
@@ -24,27 +20,15 @@
                     </div>
                     <div class="mb-3">
                         <label for="start_date">Дата начала мероприятия <span style="color: red;">*</span></label>
-                        {% if event.date_start %}
-                        <input class="form-control" value="{{ event.date_start }}" type="date" name="start_date" id="start_date" min="{{ today }}" required>
-                        {% else %}
-                        <input class="form-control" type="date" name="start_date" id="start_date" min="{{ today }}" required>
-                        {% endif %}
+                        <input class="form-control" value="{{ event.date_start or '' }}" type="date" name="start_date" id="start_date" min="{{ today }}" required>
                     </div>
                     <div class="mb-3">
                         <label for="start_time">Время начала мероприятия <span style="color: red;">*</span></label>
-                        {% if event.time_start %}
-                        <input class="form-control" value="{{ event.time_start }}" type="time" name="start_time" id="start_time" required step="1800">
-                        {% else %}
-                        <input class="form-control" type="time" name="start_time" id="start_time" required step="1800">
-                        {% endif %}
+                        <input class="form-control" value="{{ event.time_start or '' }}" type="time" name="start_time" id="start_time" required step="1800">
                     </div>
                     <div class="mb-3">
                         <label for="duration">Продолжительность мероприятия (в часах) <span style="color: red;">*</span></label>
-                        {% if event.duration %}
-                        <input class="form-control" type="number" name="duration" id="duration" min="1" value="{{ event.duration }}" required>
-                        {% else %}
-                        <input class="form-control" type="number" name="duration" id="duration" min="1" required>
-                        {% endif %}
+                        <input class="form-control" type="number" name="duration" id="duration" min="1" value="{{ event.duration or '' }}" required>
                     </div>
                     <div class="mb-3 d-flex flex-column flex-grow-1">
                         <label for="short_desc">Краткое описание <span style="color: red;">*</span></label>
@@ -55,6 +39,7 @@
                         {% endif %}
                     </div>
                 </div>
+                {# if action == 'create' #}
                 <div class="col-md-6 d-flex flex-column">
                     <div class="mb-3">
                         <label for="file">Фоновое изображение <span style="color: red;">*</span></label>
@@ -65,6 +50,7 @@
                         <label for="file" class="btn btn-dark">Выбрать изображение</label>
                     </div>
                 </div>
+                {# endif #}
             </div>
 
             <div class="mb-3">

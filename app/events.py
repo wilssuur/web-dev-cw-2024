@@ -12,7 +12,8 @@ import os
 bp = Blueprint('events', __name__, url_prefix='/events')
 PAGE_COUNT = 5
 
-EVENT_FIELDS = ['name', 'topic', 'start_date', 'start_time', 'duration', 'short_desc', 'full_desc']
+EVENT_FIELDS = ['name', 'topic', 'start_date', 'start_time', 'duration', 'short_desc']
+OPTIONAL_FIELDS = ['full_desc']
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 def generate_unique_filename(filename):
@@ -20,14 +21,19 @@ def generate_unique_filename(filename):
     unique_name = uuid.uuid4().hex
     return f"{unique_name}{ext}"
 
-def get_form_data(required_fields):
+def get_form_data(required_fields, optional_fields=None):
     event = {}
+    all_filled = True
     for field in required_fields:
-        if request.form.get(field) or field == 'full_desc':
+        value = request.form.get(field)
+        if not value:
+            all_filled = False
+        event[field] = value
+    if optional_fields:
+        for field in optional_fields:
             event[field] = request.form.get(field)
-        else:
-            return False
-    return event
+    return event, all_filled
+
 
 def get_topics():
     query = "SELECT * FROM topics"
@@ -46,20 +52,20 @@ def allowed_file(filename):
 def create():
     topics = get_topics()
     if request.method == "GET":
-        return render_template('user/new_event.html', topics=topics)
+        return render_template('user/new_event.html', topics=topics, event=None)
     
     event = {}
-    event = get_form_data(EVENT_FIELDS)
-    if not event:
+    event, all_filled = get_form_data(EVENT_FIELDS, OPTIONAL_FIELDS)
+    if not all_filled:
         flash("Заполните все обязательные поля", category="danger")
-        return render_template('user/new_event.html', topics=topics)
+        return render_template('user/new_event.html', topics=topics, event=event)
 
     if not request.files['file']:
         flash("Загрузите изображение", category="danger")
-        return render_template('user/new_event.html', topics=topics)
+        return render_template('user/new_event.html', topics=topics, event=event)
     if not 'file' in request.files:
         flash("Ошибка загрузки изображения", category="danger")
-        return render_template('user/new_event.html', topics=topics)
+        return render_template('user/new_event.html', topics=topics, event=event)
     
     file = request.files['file']
     filename = secure_filename(file.filename)
@@ -67,12 +73,12 @@ def create():
 
     if not file and allowed_file(file.filename):
         flash("Неверный формат изображения", category="danger")
-        return render_template('user/new_event.html', topics=topics)
+        return render_template('user/new_event.html', topics=topics, event=event)
     try:
         file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
     except Exception:
         flash("Ошибка сохранения изображения", category="danger")
-        return render_template('user/new_event.html', topics=topics)
+        return render_template('user/new_event.html', topics=topics, event=event)
     
     event['user_id'], event['filename'] = current_user.id, filename
     query = ("INSERT INTO events "
@@ -88,7 +94,7 @@ def create():
     except DatabaseError:
         flash("Ошибка базы данных", category="danger")
         db_connector.connect().rollback()
-        return render_template('user/new_event.html', topics=topics)
+        return render_template('user/new_event.html', topics=topics, event=event)
     
 @bp.route('/<int:event_id>/delete', methods=['POST'])
 @login_required
@@ -150,7 +156,10 @@ def edit(event_id):
 
     if request.method == "POST":
         event = {}
-        event = get_form_data(EVENT_FIELDS)
+        event, all_filled = get_form_data(EVENT_FIELDS, OPTIONAL_FIELDS)
+        if not all_filled:
+            flash("Заполните все обязательные поля", category="danger")
+            return render_template('user/new_event.html', topics=topics, event=event)
         event['event_id'] = event_id
 
         query = ("UPDATE events SET name=%(name)s, topic_id=%(topic)s, "

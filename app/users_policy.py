@@ -10,8 +10,8 @@ class UsersPolicy:
         return current_user.is_admin()
     
     def edit(self):
-        return self.event.user_id == int(current_user.id)
+        return self.event.user_id == int(current_user.id) and self.event.status_id == 3
     
     def delete(self):
-        return self.event.user_id == int(current_user.id)
+        return self.event.user_id == int(current_user.id) and self.event.status_id == 3
     

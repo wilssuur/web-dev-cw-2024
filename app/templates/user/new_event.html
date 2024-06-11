@@ -4,5 +4,5 @@
 
 {% block content %}
     <h2>Новое мероприятие</h2>
-    {{ event_form(topics=topics, action='create') }}
+    {{ event_form(topics, 'create', event) }}
 {% endblock %}
