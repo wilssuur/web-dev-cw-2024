@@ -3,6 +3,7 @@
 {% block content %}
     <div class="row mb-3 mt-5">
         {% for event in events %}
+        {# if not event.user_id|string == current_user.id|string #}
             <div class="col-md-4 d-flex">
                 <div class="card mb-4">
                     <img src="{{ url_for('static', filename='images/' ~ event.image_filename) }}" alt="{{ event.name }}" style="width: 415px; height:250px">
@@ -36,6 +37,7 @@
                     </div>
                 </div>
             </div>
+            {# endif #}
         {% endfor %}
     </div>
     

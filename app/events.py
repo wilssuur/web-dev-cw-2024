@@ -46,7 +46,6 @@ def allowed_file(filename):
 def create():
     topics = get_topics()
     if request.method == "GET":
-        topics = get_topics()
         return render_template('user/new_event.html', topics=topics)
     
     event = {}
@@ -54,13 +53,10 @@ def create():
     if not event:
         flash("Заполните все обязательные поля", category="danger")
         return render_template('user/new_event.html', topics=topics)
-    
-    event['user_id'] = current_user.id
 
     if not request.files['file']:
         flash("Загрузите изображение", category="danger")
         return render_template('user/new_event.html', topics=topics)
-    
     if not 'file' in request.files:
         flash("Ошибка загрузки изображения", category="danger")
         return render_template('user/new_event.html', topics=topics)
@@ -72,14 +68,13 @@ def create():
     if not file and allowed_file(file.filename):
         flash("Неверный формат изображения", category="danger")
         return render_template('user/new_event.html', topics=topics)
-    
     try:
         file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
     except Exception:
         flash("Ошибка сохранения изображения", category="danger")
         return render_template('user/new_event.html', topics=topics)
     
-    event['filename'] = filename
+    event['user_id'], event['filename'] = current_user.id, filename
     query = ("INSERT INTO events "
              "(name, topic_id, date_start, time_start, duration, short_desc, full_desc, status_id, "
              "user_id, image_filename) VALUES (%(name)s, %(topic)s, %(start_date)s, "
@@ -90,7 +85,6 @@ def create():
             db_connector.connect().commit()
             flash("Мероприятие отправлено на проверку", category="success")
             return redirect(url_for('index'))
-
     except DatabaseError:
         flash("Ошибка базы данных", category="danger")
         db_connector.connect().rollback()
@@ -125,6 +119,7 @@ def delete(event_id):
         flash(f"Ошибка удаления файла: {str(e)}", category="danger")
 
     return redirect(url_for('events.created'))
+
 
 @bp.route('/<int:event_id>/show')
 @login_required
@@ -161,9 +156,7 @@ def edit(event_id):
         query = ("UPDATE events SET name=%(name)s, topic_id=%(topic)s, "
                  "date_start=%(start_date)s, time_start=%(start_time)s, duration=%(duration)s, "
                  "short_desc=%(short_desc)s, full_desc=%(full_desc)s WHERE id=%(event_id)s")
-        print("HERE")
-        print(query)
-        print(event)
+
         try:
             with db_connector.connect().cursor(named_tuple=True) as cursor:
                 cursor.execute(query, event)
@@ -208,3 +201,5 @@ def created():
                            total_pages=total_count/PAGE_COUNT,
                            current_time=current_time,
                            datetime=datetime)
+
+

@@ -49,13 +49,12 @@ def awaiting():
 def accept_event(event_id):
     query = ("UPDATE events SET status_id = 1 WHERE id = %s")
     try:
-        with db_connector.connect() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(query, (event_id,))
-                conn.commit()
+        with db_connector.connect().cursor(named_tuple=True) as cursor:
+            cursor.execute(query, (event_id,))
+            db_connector.connect().commit()
         flash('Мероприятие принято', 'success')
     except DatabaseError:
-        flash(f'Ошибка база данных', 'danger')
+        flash('Ошибка база данных', 'danger')
 
     return redirect(url_for('admin.awaiting'))
 
@@ -65,14 +64,13 @@ def accept_event(event_id):
 def reject_event(event_id):
     query = ("UPDATE events SET status_id = 2 WHERE id = %s")
     try:
-        with db_connector.connect() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(query, (event_id,))
-                conn.commit()
+        with db_connector.connect().cursor(named_tuple=True) as cursor:
+            cursor.execute(query, (event_id,))
+            db_connector.connect().commit()
         flash('Мероприятие отклонено', 'success')
 
-    except DatabaseError as e:
-        flash(f'Ошибка база данных', 'danger')
+    except DatabaseError:
+        flash('Ошибка база данных', 'danger')
 
     return redirect(url_for('admin.awaiting'))
 
